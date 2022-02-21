@@ -1,3 +1,7 @@
+//Note: seems that entries are being repeated in reached and frontier
+// believed to be due to use of vectors as key
+// Proposed solution: substitue strings with deliminators instead of vectors
+
 #include <iostream>
 #include <string.h>
 #include <fstream>
@@ -136,7 +140,7 @@ int processFile(string filename, vector<string> &stacks, vector<string> &goals){
 
 struct nodeCmp{
     bool operator()(const Node n, const Node m) const {
-        return n.path_cost > m.path_cost;
+        return n.path_cost >= m.path_cost;
     }
 };
 Node bestFirstSearch(vector<string> problem, vector<string> goal){
@@ -145,11 +149,17 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal){
     priority_queue<Node, vector<Node>, nodeCmp> frontier;
     frontier.push(initial);
     
-    map<vector<string>, Node> reached;
-    reached[problem] = initial;
+    map<string, Node> reached;
+    string state = "";
+    for(int i = 0; i < problem.size(); i++){
+        state += problem.at(i) + ":";
+    }
+    reached[state] = initial;
     iterator<vector<string>, Node> it;
-    
-    while(!frontier.empty()){
+    int iter = 0;
+
+    while(!frontier.empty() && iter < 10){
+        iter ++;
         Node n = frontier.top();
         frontier.pop();
         if(n.state == goal){
@@ -157,15 +167,32 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal){
         }
         n.generateChildren();
         for(int i = 0; i < n.children.size(); i++){
-            Node s = n.children.at(i);
-            if(reached.find(s.state) == reached.end() || s.path_cost < reached.at(s.state).path_cost){
-                reached[s.state] = s;
-                frontier.push(s);
+            state = "";
+            for(int j = 0; j < n.children.at(i).state.size(); j++){
+                state += n.children.at(i).state.at(j) + ":";
+            }
+            if(reached.count(state) == 0){ //|| s.path_cost < reached.at(s.state).path_cost){
+                reached[state] = n.children.at(i);
+                frontier.push(n.children.at(i));
             }
 
         }
 
     }
+
+    for (auto const &pair: reached) {
+        //cout << "{" << pair.first.at(0) << ":" << pair.first.at(1) << ":" << pair.first.at(2) << " - " << pair.second.state.at(0) << ":" << pair.second.state.at(1) << ":" << pair.second.state.at(2) << "}\n";
+        cout << "{" << pair.first << " - " << pair.second.path_cost << "}\n";
+    }
+
+    /*while(!frontier.empty()){
+        cout << frontier.top().state.at(0) << endl;
+        cout << frontier.top().state.at(1) << endl;
+        cout << frontier.top().state.at(2) << endl;
+        cout << "---------------------------------" << endl;
+        frontier.pop();
+    }*/
+
     Node n;
     return n;
     
@@ -187,7 +214,32 @@ int main(int argc, char* args[]){
     for(int i = 0; i < test.state.size(); i++){
         cout << test.state.at(i) << endl;
     }
+    /*Node n(stacks);
+    n.generateChildren();
+    for(int i = 0; i < n.children.size(); i++){
+        for(int j = 0; j < n.children.at(i).state.size(); j++){
+            cout << n.children.at(i).state.at(j) << endl;
+        }
+        cout << "-----------------------------" << endl;
+    }*/
 
+    /*map<vector<string>, Node> reached;
+    Node s (stacks);
+    reached[stacks] = s;
 
-    
+    for (auto const &pair: reached) {
+        cout << "{" << pair.first.at(0) << ":" << pair.first.at(1) << ":" << pair.first.at(2) << " - " << pair.second.state.at(0) << ":" << pair.second.state.at(1) << ":" << pair.second.state.at(2) << "}\n";
+    }
+
+    cout << (reached.find(s.state) == reached.end()) << endl;*/
+
+    map<int,char> example = {{1,'a'},{2,'b'}};
+ 
+    for(int x: {2, 5}) {
+        if(example.contains(x)) {
+            cout << x << ": Found\n";
+        } else {
+            cout << x << ": Not found\n";
+        }
+    }    
 }

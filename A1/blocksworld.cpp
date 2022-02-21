@@ -9,14 +9,13 @@
 #include <limits>
 #include <queue>
 #include <map>
+#include <typeinfo>
 
 using namespace std;
 
 class Node{
 public:
     vector<string> state;
-    int alpha;
-    int beta;
     int path_cost;
     vector<Node> children;
 
@@ -25,20 +24,19 @@ public:
     Node(vector<string> stacks){
         state = stacks;
         path_cost = 0;
-        alpha = numeric_limits<int>::max();
-        beta = numeric_limits<int>::min();
     }
 
     Node(vector<string> stacks, int g){
         state = stacks;
         path_cost = g + 1;
-        alpha = numeric_limits<int>::max();
-        beta = numeric_limits<int>::min();
     }
 
     void generateChildren(){
         for(int i = 0; i < state.size(); i++){
-            char top_of_stack = state.at(i)[state.at(i).size() - 1];
+            if(state.at(i).size() == 0){
+                continue;
+            }
+            char top_of_stack = state.at(i).at(state.at(i).size() - 1);
             state.at(i).pop_back();
             for(int j = 0; j < state.size(); j++){
                 if(j != i){
@@ -48,7 +46,7 @@ public:
                     state.at(j).pop_back();
                 }
             }
-            state.at(i).push_back(top_of_stack);
+            state.at(i) += (top_of_stack);
         }
     }
 };
@@ -143,23 +141,19 @@ struct nodeCmp{
         return n.path_cost >= m.path_cost;
     }
 };
-Node bestFirstSearch(vector<string> problem, vector<string> goal){
+Node bestFirstSearch(vector<string> problem, vector<string> goal, int max){
     Node initial(problem);
     
     priority_queue<Node, vector<Node>, nodeCmp> frontier;
     frontier.push(initial);
     
-    map<string, Node> reached;
-    string state = "";
-    for(int i = 0; i < problem.size(); i++){
-        state += problem.at(i) + ":";
-    }
-    reached[state] = initial;
+    map<vector<string>, Node> reached;
+    reached[problem] = initial;
     iterator<vector<string>, Node> it;
-    int iter = 0;
-
-    while(!frontier.empty() && iter < 10){
-        iter ++;
+    
+    int i = 0;
+    while(!frontier.empty() && i < max){
+        i++;
         Node n = frontier.top();
         frontier.pop();
         if(n.state == goal){
@@ -167,35 +161,17 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal){
         }
         n.generateChildren();
         for(int i = 0; i < n.children.size(); i++){
-            state = "";
-            for(int j = 0; j < n.children.at(i).state.size(); j++){
-                state += n.children.at(i).state.at(j) + ":";
-            }
-            if(reached.count(state) == 0){ //|| s.path_cost < reached.at(s.state).path_cost){
-                reached[state] = n.children.at(i);
-                frontier.push(n.children.at(i));
+            Node s = n.children.at(i);
+            if(reached.find(s.state) == reached.end() || s.path_cost < reached.at(s.state).path_cost){
+                reached[s.state] = s;
+                frontier.push(s);
             }
 
         }
 
     }
-
-    for (auto const &pair: reached) {
-        //cout << "{" << pair.first.at(0) << ":" << pair.first.at(1) << ":" << pair.first.at(2) << " - " << pair.second.state.at(0) << ":" << pair.second.state.at(1) << ":" << pair.second.state.at(2) << "}\n";
-        cout << "{" << pair.first << " - " << pair.second.path_cost << "}\n";
-    }
-
-    /*while(!frontier.empty()){
-        cout << frontier.top().state.at(0) << endl;
-        cout << frontier.top().state.at(1) << endl;
-        cout << frontier.top().state.at(2) << endl;
-        cout << "---------------------------------" << endl;
-        frontier.pop();
-    }*/
-
     Node n;
     return n;
-    
 }
 int main(int argc, char* args[]){
     string filename;
@@ -210,36 +186,10 @@ int main(int argc, char* args[]){
     int num_moves = processFile(filename, stacks, goals);
 
     cout << "Goal: " << endl;
-    Node test = bestFirstSearch(stacks, goals);
+    Node test = bestFirstSearch(stacks, goals, max_iter);
     for(int i = 0; i < test.state.size(); i++){
         cout << test.state.at(i) << endl;
     }
-    /*Node n(stacks);
-    n.generateChildren();
-    for(int i = 0; i < n.children.size(); i++){
-        for(int j = 0; j < n.children.at(i).state.size(); j++){
-            cout << n.children.at(i).state.at(j) << endl;
-        }
-        cout << "-----------------------------" << endl;
-    }*/
 
-    /*map<vector<string>, Node> reached;
-    Node s (stacks);
-    reached[stacks] = s;
 
-    for (auto const &pair: reached) {
-        cout << "{" << pair.first.at(0) << ":" << pair.first.at(1) << ":" << pair.first.at(2) << " - " << pair.second.state.at(0) << ":" << pair.second.state.at(1) << ":" << pair.second.state.at(2) << "}\n";
-    }
-
-    cout << (reached.find(s.state) == reached.end()) << endl;*/
-
-    map<int,char> example = {{1,'a'},{2,'b'}};
- 
-    for(int x: {2, 5}) {
-        if(example.contains(x)) {
-            cout << x << ": Found\n";
-        } else {
-            cout << x << ": Not found\n";
-        }
-    }    
 }

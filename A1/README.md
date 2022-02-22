@@ -2,13 +2,13 @@
 
 ## Compiling
 To compile blocksworld simply type make into the command line. This will auto-generate the proper compiler commands:
-'>> make
-    g++ -std=c++11 blocksworld.cpp'
+`>> make `
+`g++ -std=c++11 blocksworld.cpp`
 This will generate an a.out file.
 
 ## Running
 To run the blocksworld program use ./a.out plus any arguments
-'./a.out <problem_to_solve> -H [H0|H1|H2] -MAX_ITERS <max_iterations> -MOVES'
+`./a.out <problem_to_solve> -H [H0|H1|H2] -MAX_ITERS <max_iterations> -MOVES`
 
 # Arguments
 | Argument | Description | Example | Required |

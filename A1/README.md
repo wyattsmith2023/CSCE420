@@ -27,4 +27,4 @@ To run the blocksworld program use ./a.out plus any arguments
 - Testing has shown program will work with multiple number of stacks
 - Best heuristic successfully finds goal routes for all provided test cases
 - Best heuristic will overestimate few configurations by a small number of moves
-- There will be variation based on operating system as shown by similar, but differing test results on local machine and TAMU Compute servers. This is documented in detail in RESULTS.txt
+- There will be variation in performance based on operating system as shown by similar, but differing test results on local machine and TAMU Compute servers. This is documented in detail in RESULTS.txt

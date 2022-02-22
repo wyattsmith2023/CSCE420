@@ -1,0 +1,64 @@
+probB05
+Input
+5 10 7
+>>>>>>>>>>
+AE
+CF
+D
+GHIJ
+B
+>>>>>>>>>>
+AEG
+CFI
+DJB
+
+H
+>>>>>>>>>>
+
+Tracing:
+iter=1, depth=pathcost=0, heuristic=5, score=5 children=20, Qsize=1
+iter=2, depth=pathcost=1, heuristic=4, score=5 children=20, Qsize=20
+iter=3, depth=pathcost=2, heuristic=3, score=5 children=16, Qsize=35
+iter=4, depth=pathcost=3, heuristic=2, score=5 children=16, Qsize=46
+iter=5, depth=pathcost=4, heuristic=1, score=5 children=20, Qsize=56
+success! iter=6, depth=pathcost=5, max_Qsize=71
+
+Moves for solution path:
+------- Move 0, h(n)=5 f(n)=5 -------
+AE
+CF
+D
+GHIJ
+B
+------- Move 1, h(n)=4 f(n)=5 -------
+AE
+CF
+DJ
+GHI
+B
+------- Move 2, h(n)=3 f(n)=5 -------
+AE
+CF
+DJB
+GHI
+
+------- Move 3, h(n)=2 f(n)=5 -------
+AE
+CFI
+DJB
+GH
+
+------- Move 4, h(n)=1 f(n)=5 -------
+AE
+CFI
+DJB
+G
+H
+------- Move 5, h(n)=0 f(n)=5 -------
+AEG
+CFI
+DJB
+
+H
+
+

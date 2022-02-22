@@ -1,0 +1,81 @@
+Heuristic:
+The heuristic used has two parts. The first is, if a stack is as tall as its corresponding goal 
+stack and has a block that needs to be moved, then we add the number of blocks on top of it 
+including itself. The second part is, if a goal stack is taller than the corresponding input stack, 
+then we add the difference. By combining these two rules together, we get the total score for the 
+heuristic.
+Example:
+Given:      Goal:
+J           JIGC        +3      Goal is 3 spaces taller than the given
+
+BCE         BDA         +2 +1   C is buried under E, E is in the wrong stack
+ADGI                    
+FH          FHE         +1      Goal is 1 space taller than the given
+
+Performance:
+***Note: these performance metrics were gathered from running on the compute.cs.tamu.edu server. When 
+running locally performance was comparable, but saw slight improvement.***
+
+On Local Machine
+A03 - A11
+statistics: probs/probA03.bwp method Astar planlen 3 iter 4 maxq 10
+statistics: probs/probA04.bwp method Astar planlen 4 iter 5 maxq 9
+statistics: probs/probA05.bwp method Astar planlen 5 iter 6 maxq 14
+statistics: probs/probA06.bwp method Astar planlen 6 iter 17 maxq 34
+statistics: probs/probA07.bwp method Astar planlen 7 iter 10 maxq 19
+statistics: probs/probA08.bwp method Astar planlen 10 iter 124 maxq 148
+statistics: probs/probA09.bwp method Astar planlen 9 iter 21 maxq 50
+statistics: probs/probA10.bwp method Astar planlen 10 iter 168 maxq 232
+statistics: probs/probA11.bwp method Astar planlen 11 iter 68 maxq 144
+
+B03 - B20
+statistics: probs/probB03.bwp method Astar planlen 3 iter 4 maxq 37
+statistics: probs/probB04.bwp method Astar planlen 4 iter 5 maxq 61
+statistics: probs/probB05.bwp method Astar planlen 5 iter 6 maxq 71
+statistics: probs/probB06.bwp method Astar planlen 6 iter 7 maxq 70
+statistics: probs/probB07.bwp method Astar planlen 7 iter 11 maxq 121
+statistics: probs/probB08.bwp method Astar planlen 8 iter 9 maxq 112
+statistics: probs/probB09.bwp method Astar planlen 8 iter 10 maxq 112
+statistics: probs/probB10.bwp method Astar planlen 10 iter 64 maxq 775
+statistics: probs/probB11.bwp method Astar planlen 9 iter 49 maxq 616
+statistics: probs/probB12.bwp method Astar planlen 10 iter 13 maxq 168
+statistics: probs/probB13.bwp method Astar planlen 13 iter 4520 maxq 28936
+statistics: probs/probB14.bwp method Astar planlen 14 iter 1453 maxq 11669
+statistics: probs/probB15.bwp method Astar planlen 15 iter 641 maxq 6792
+statistics: probs/probB16.bwp method Astar planlen 16 iter 764 maxq 10016
+statistics: probs/probB17.bwp method Astar planlen 16 iter 1318 maxq 14609
+statistics: probs/probB18.bwp method Astar planlen 13 iter 39 maxq 438
+statistics: probs/probB19.bwp method Astar planlen 14 iter 1355 maxq 8678
+statistics: probs/probB20.bwp method Astar planlen 16 iter 112 maxq 1471
+
+On compute.cs.tamu.edu
+A03-A11
+statistics: probs/probA03.bwp method Astar planlen 3 iter 4 maxq 10
+statistics: probs/probA04.bwp method Astar planlen 4 iter 5 maxq 9
+statistics: probs/probA05.bwp method Astar planlen 5 iter 6 maxq 14
+statistics: probs/probA06.bwp method Astar planlen 6 iter 17 maxq 34
+statistics: probs/probA07.bwp method Astar planlen 7 iter 10 maxq 19
+statistics: probs/probA08.bwp method Astar planlen 10 iter 124 maxq 148
+statistics: probs/probA09.bwp method Astar planlen 9 iter 21 maxq 50
+statistics: probs/probA10.bwp method Astar planlen 10 iter 168 maxq 232
+statistics: probs/probA11.bwp method Astar planlen 11 iter 68 maxq 144
+
+B03-B20
+statistics: probs/probB03.bwp method Astar planlen 3 iter 4 maxq 37
+statistics: probs/probB04.bwp method Astar planlen 4 iter 5 maxq 61
+statistics: probs/probB05.bwp method Astar planlen 5 iter 6 maxq 71
+statistics: probs/probB06.bwp method Astar planlen 6 iter 7 maxq 70
+statistics: probs/probB07.bwp method Astar planlen 7 iter 12 maxq 131
+statistics: probs/probB08.bwp method Astar planlen 8 iter 9 maxq 112
+statistics: probs/probB09.bwp method Astar planlen 8 iter 10 maxq 112
+statistics: probs/probB10.bwp method Astar planlen 11 iter 154 maxq 1667
+statistics: probs/probB11.bwp method Astar planlen 10 iter 99 maxq 1179
+statistics: probs/probB12.bwp method Astar planlen 9 iter 14 maxq 173
+statistics: probs/probB13.bwp method Astar planlen 13 iter 5478 maxq 33780
+statistics: probs/probB14.bwp method Astar planlen 14 iter 5638 maxq 41668
+statistics: probs/probB15.bwp method Astar planlen 15 iter 1555 maxq 13320
+statistics: probs/probB16.bwp method Astar planlen 17 iter 1818 maxq 22513
+statistics: probs/probB17.bwp method Astar planlen 16 iter 2648 maxq 28151
+statistics: probs/probB18.bwp method Astar planlen 13 iter 28 maxq 331
+statistics: probs/probB19.bwp method Astar planlen 14 iter 4008 maxq 21621
+statistics: probs/probB20.bwp method Astar planlen 17 iter 127 maxq 1575

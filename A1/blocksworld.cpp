@@ -1,55 +1,109 @@
+// Heuristic used is if we find a block that needs to be moved
+// we add the number of blocks ontop of it including itself and 
+// if a goal stack is taller than the corresponding stack we add
+// the difference
+
 #include <iostream>
 #include <string.h>
 #include <fstream>
 #include <vector>
-#include <limits>
 #include <queue>
 #include <map>
 
 using namespace std;
 
+int iterations;
+int max_q;
+vector<string> goal_state;
+string h_code;
+
 class Node{
 public:
     vector<string> state;
-    int alpha;
-    int beta;
     int path_cost;
     vector<Node> children;
+    vector<string> moves;
 
     Node(){}
 
     Node(vector<string> stacks){
         state = stacks;
         path_cost = 0;
-        alpha = numeric_limits<int>::max();
-        beta = numeric_limits<int>::min();
     }
 
     Node(vector<string> stacks, int g){
         state = stacks;
         path_cost = g + 1;
-        alpha = numeric_limits<int>::max();
-        beta = numeric_limits<int>::min();
+    }
+
+    int heuristic(){
+        int h = 0;
+        // Count number of boxes out of place
+        // best: B16
+        if(h_code == "H1"){
+            for(int i = 0; i < state.size(); i++){
+                if(state.at(i).size() < goal_state.at(i).size()){
+                    h += (goal_state.at(i).size() - state.at(i).size());
+                }
+                for(int j = 0; j < state.at(i).size(); j++){
+                    if(j < goal_state.at(i).size()){
+                        if(state.at(i).at(j) != goal_state.at(i).at(j)){
+                            h++;
+                        }
+                    }
+                }
+            }
+        } 
+        // When goal state is taller than current state, add difference in height
+        // When goal state and current state have same height, count how buried out of place boxes are
+        else if (h_code == "H2"){
+            for(int i = 0; i < state.size(); i++){
+                if(state.at(i).size() < goal_state.at(i).size()){
+                    h += (goal_state.at(i).size() - state.at(i).size());
+                }
+                for(int j = 0; j < state.at(i).size(); j++){
+                    if(j < goal_state.at(i).size()){
+                        if(state.at(i).at(j) != goal_state.at(i).at(j)){
+                            h += (state.at(i).size() - state.at(i).find(state.at(i).at(j)));
+                        }
+                    }
+                }
+            }
+        }
+        return h;
     }
 
     void generateChildren(){
-        for(int i = 0; i < state.size(); i++){
-            char top_of_stack = state.at(i)[state.at(i).size() - 1];
-            state.at(i).pop_back();
-            for(int j = 0; j < state.size(); j++){
+        vector<string> child_state = state;
+        for(int i = 0; i < child_state.size(); i++){
+            // if there is no top block to move around loop to next block
+            if(child_state.at(i).size() == 0){
+                continue;
+            }
+            char top_of_stack = child_state.at(i).at(child_state.at(i).size() - 1);
+            child_state.at(i).pop_back();
+            for(int j = 0; j < child_state.size(); j++){
                 if(j != i){
-                    state.at(j) += top_of_stack;
-                    Node c(state, path_cost);
+                    child_state.at(j) += top_of_stack;
+                    Node c(child_state, path_cost);
+                    // store the moves of parent node for solution path
+                    for(int i = 0; i < moves.size(); i++){
+                        c.moves.push_back(moves.at(i));
+                    }
+                    c.moves.push_back("------- Move " + to_string(path_cost) + ", h(n)=" + to_string(heuristic()) + " f(n)=" + to_string(path_cost + heuristic()) +  " -------");
+                    for(int i = 0; i < state.size(); i++){
+                        c.moves.push_back(state.at(i));
+                    }
                     children.push_back(c);
-                    state.at(j).pop_back();
+                    child_state.at(j).pop_back();
                 }
             }
-            state.at(i).push_back(top_of_stack);
+           child_state = state;
         }
     }
 };
 
-int processArguments(string &filename, string &h, int &max_iter, int argc,char* args[]){
+int processArguments(string &filename, string &h, int &max_iter, bool &display_moves, int argc,char* args[]){
 // Ensure file has been provided
     try{
         if(argc < 2){
@@ -57,7 +111,7 @@ int processArguments(string &filename, string &h, int &max_iter, int argc,char* 
         }
 
         filename = args[1];
-        h = "H0";
+        h = "H2";
         max_iter = 100000;
 
         // Check if more arguments have been passed
@@ -79,6 +133,10 @@ int processArguments(string &filename, string &h, int &max_iter, int argc,char* 
                     else {
                         throw 2;
                     }
+                }
+                // show solution path
+                else if(strcmp(args[i],"-MOVES") == 0){
+                         display_moves = true;
                 }
                 else {
                     throw 3;
@@ -134,12 +192,15 @@ int processFile(string filename, vector<string> &stacks, vector<string> &goals){
     return num_moves; 
 }
 
+//decide priority
 struct nodeCmp{
-    bool operator()(const Node n, const Node m) const {
-        return n.path_cost > m.path_cost;
+    bool operator()(Node n, Node m) const {
+        return n.path_cost + n.heuristic() >= m.path_cost + m.heuristic();
     }
 };
-Node bestFirstSearch(vector<string> problem, vector<string> goal){
+
+//Astar algorithm
+Node bestFirstSearch(vector<string> problem, vector<string> goal, int max){
     Node initial(problem);
     
     priority_queue<Node, vector<Node>, nodeCmp> frontier;
@@ -149,13 +210,24 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal){
     reached[problem] = initial;
     iterator<vector<string>, Node> it;
     
-    while(!frontier.empty()){
+    iterations = 0;
+    max_q = 1;
+    while(!frontier.empty() && iterations < max){
+        if(frontier.size() > max_q){
+            max_q = frontier.size();
+        }
+        iterations++;
         Node n = frontier.top();
+
         frontier.pop();
         if(n.state == goal){
+            //Report Transcripts
+            //cout << "success! " << "iter=" << iterations << ", depth=pathcost=" << n.path_cost << ", max_Qsize=" << max_q << endl;
             return n;
         }
         n.generateChildren();
+        //Report Transcripts
+        //cout << "iter=" << iterations << ", depth=pathcost=" << n.path_cost << ", heuristic=" << n.heuristic() << ", score=" << (n.path_cost+n.heuristic()) << " children=" << n.children.size() << ", Qsize=" << max_q << endl;
         for(int i = 0; i < n.children.size(); i++){
             Node s = n.children.at(i);
             if(reached.find(s.state) == reached.end() || s.path_cost < reached.at(s.state).path_cost){
@@ -166,28 +238,47 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal){
         }
 
     }
-    Node n;
-    return n;
-    
+    // return initial Node is goal node not found
+    return initial;
 }
+
+void printMoves(Node n){
+    for(int i = 0; i < n.moves.size(); i++){
+        cout << n.moves.at(i) << endl;
+    }
+        cout << "------- Move " << n.path_cost << ", h(n)=" << n.heuristic() << " f(n)=" << (n.path_cost + n.heuristic()) <<  " -------" << endl;
+        for(int i = 0; i < n.state.size(); i++){
+            cout << n.state.at(i) << endl;
+        }
+}
+
 int main(int argc, char* args[]){
     string filename;
-    string h;
     int max_iter;
     vector<string> goals;
-    vector<string> stacks;
+    vector<string> stacks;  //Initial problem input
+    bool display_moves = false;
 
-    if(!processArguments(filename, h, max_iter, argc, args))
+    if(!processArguments(filename, h_code, max_iter, display_moves, argc, args))
         return 0;
 
     int num_moves = processFile(filename, stacks, goals);
+    goal_state = goals;
 
-    cout << "Goal: " << endl;
-    Node test = bestFirstSearch(stacks, goals);
-    for(int i = 0; i < test.state.size(); i++){
-        cout << test.state.at(i) << endl;
+    Node goal = bestFirstSearch(stacks, goals, max_iter);
+
+    cout << "statistics: " << filename << " method ";
+    if(h_code == "H0")
+        cout << "BFS";
+    else 
+        cout << "Astar";
+    cout << " planlen ";
+    if(goal.path_cost != 0 && iterations <= max_iter){
+        cout << goal.path_cost << " iter " << iterations << " maxq " << max_q << endl;
+    } else {
+        cout << "FAILED" << " iter " << iterations << " maxq " << max_q << endl;
     }
 
-
-    
+    if(display_moves)
+        printMoves(goal);
 }

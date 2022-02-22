@@ -7,10 +7,8 @@
 #include <string.h>
 #include <fstream>
 #include <vector>
-#include <limits>
 #include <queue>
 #include <map>
-#include <typeinfo>
 
 using namespace std;
 
@@ -265,9 +263,6 @@ int main(int argc, char* args[]){
         cout << "FAILED" << " iter " << iterations << " maxq " << max_q << endl;
     }
 
-
     if(display_moves)
         printMoves(goal);
-    
-
 }

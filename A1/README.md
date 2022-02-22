@@ -2,8 +2,10 @@
 
 ## Compiling
 To compile blocksworld simply type make into the command line. This will auto-generate the proper compiler commands:
-`>> make `
-`g++ -std=c++11 blocksworld.cpp`
+```
+>> make
+g++ -std=c++11 blocksworld.cpp
+```
 This will generate an a.out file.
 
 ## Running

@@ -1,0 +1,80 @@
+probA09
+Input:
+3 5 500
+>>>>>>>>>>
+AE
+CD
+B
+>>>>>>>>>>
+EA
+BD
+C
+>>>>>>>>>>
+
+
+Transcript:
+iter=1, depth=pathcost=0, heuristic=6, score=6 children=6, Qsize=1
+iter=2, depth=pathcost=1, heuristic=6, score=7 children=6, Qsize=6
+iter=3, depth=pathcost=1, heuristic=6, score=7 children=6, Qsize=9
+iter=4, depth=pathcost=1, heuristic=7, score=8 children=4, Qsize=12
+iter=5, depth=pathcost=2, heuristic=6, score=8 children=6, Qsize=13
+iter=6, depth=pathcost=1, heuristic=7, score=8 children=6, Qsize=16
+iter=7, depth=pathcost=2, heuristic=7, score=9 children=6, Qsize=19
+iter=8, depth=pathcost=3, heuristic=6, score=9 children=6, Qsize=22
+iter=9, depth=pathcost=2, heuristic=7, score=9 children=4, Qsize=24
+iter=10, depth=pathcost=2, heuristic=7, score=9 children=4, Qsize=25
+iter=11, depth=pathcost=2, heuristic=7, score=9 children=4, Qsize=26
+iter=12, depth=pathcost=2, heuristic=7, score=9 children=6, Qsize=27
+iter=13, depth=pathcost=2, heuristic=7, score=9 children=6, Qsize=30
+iter=14, depth=pathcost=2, heuristic=7, score=9 children=4, Qsize=32
+iter=15, depth=pathcost=2, heuristic=7, score=9 children=4, Qsize=32
+iter=16, depth=pathcost=3, heuristic=5, score=8 children=6, Qsize=33
+iter=17, depth=pathcost=4, heuristic=3, score=7 children=6, Qsize=36
+iter=18, depth=pathcost=5, heuristic=3, score=8 children=4, Qsize=39
+iter=19, depth=pathcost=5, heuristic=3, score=8 children=6, Qsize=40
+iter=20, depth=pathcost=6, heuristic=3, score=9 children=4, Qsize=43
+iter=21, depth=pathcost=7, heuristic=2, score=9 children=4, Qsize=44
+iter=22, depth=pathcost=8, heuristic=1, score=9 children=6, Qsize=45
+success! iter=23, depth=pathcost=9, max_Qsize=48
+
+Moves for solution:
+------- Move 0, h(n)=6 f(n)=6 -------
+AE
+CD
+B
+------- Move 1, h(n)=6 f(n)=7 -------
+A
+CDE
+B
+------- Move 2, h(n)=7 f(n)=9 -------
+
+CDE
+BA
+------- Move 3, h(n)=5 f(n)=8 -------
+E
+CD
+BA
+------- Move 4, h(n)=3 f(n)=7 -------
+EA
+CD
+B
+------- Move 5, h(n)=3 f(n)=8 -------
+EAD
+C
+B
+------- Move 6, h(n)=3 f(n)=9 -------
+EADB
+C
+
+------- Move 7, h(n)=2 f(n)=9 -------
+EADB
+
+C
+------- Move 8, h(n)=1 f(n)=9 -------
+EAD
+B
+C
+------- Move 9, h(n)=0 f(n)=9 -------
+EA
+BD
+C

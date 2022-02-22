@@ -38,6 +38,7 @@ public:
 
     int heuristic(){
         int h = 0;
+        // Count number of boxes out of place
         // best: B16
         if(h_code == "H1"){
             for(int i = 0; i < state.size(); i++){
@@ -52,7 +53,10 @@ public:
                     }
                 }
             }
-        } else if (h_code == "H2"){
+        } 
+        // When goal state is taller than current state, add difference in height
+        // When goal state and current state have same height, count how buried out of place boxes are
+        else if (h_code == "H2"){
             for(int i = 0; i < state.size(); i++){
                 if(state.at(i).size() < goal_state.at(i).size()){
                     h += (goal_state.at(i).size() - state.at(i).size());
@@ -72,6 +76,7 @@ public:
     void generateChildren(){
         vector<string> child_state = state;
         for(int i = 0; i < child_state.size(); i++){
+            // if there is no top block to move around loop to next block
             if(child_state.at(i).size() == 0){
                 continue;
             }
@@ -81,6 +86,7 @@ public:
                 if(j != i){
                     child_state.at(j) += top_of_stack;
                     Node c(child_state, path_cost);
+                    // store the moves of parent node for solution path
                     for(int i = 0; i < moves.size(); i++){
                         c.moves.push_back(moves.at(i));
                     }
@@ -128,6 +134,7 @@ int processArguments(string &filename, string &h, int &max_iter, bool &display_m
                         throw 2;
                     }
                 }
+                // show solution path
                 else if(strcmp(args[i],"-MOVES") == 0){
                          display_moves = true;
                 }
@@ -185,11 +192,14 @@ int processFile(string filename, vector<string> &stacks, vector<string> &goals){
     return num_moves; 
 }
 
+//decide priority
 struct nodeCmp{
     bool operator()(Node n, Node m) const {
         return n.path_cost + n.heuristic() >= m.path_cost + m.heuristic();
     }
 };
+
+//Astar algorithm
 Node bestFirstSearch(vector<string> problem, vector<string> goal, int max){
     Node initial(problem);
     
@@ -208,11 +218,16 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal, int max){
         }
         iterations++;
         Node n = frontier.top();
+
         frontier.pop();
         if(n.state == goal){
+            //Report Transcripts
+            //cout << "success! " << "iter=" << iterations << ", depth=pathcost=" << n.path_cost << ", max_Qsize=" << max_q << endl;
             return n;
         }
         n.generateChildren();
+        //Report Transcripts
+        //cout << "iter=" << iterations << ", depth=pathcost=" << n.path_cost << ", heuristic=" << n.heuristic() << ", score=" << (n.path_cost+n.heuristic()) << " children=" << n.children.size() << ", Qsize=" << max_q << endl;
         for(int i = 0; i < n.children.size(); i++){
             Node s = n.children.at(i);
             if(reached.find(s.state) == reached.end() || s.path_cost < reached.at(s.state).path_cost){
@@ -223,6 +238,7 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal, int max){
         }
 
     }
+    // return initial Node is goal node not found
     return initial;
 }
 
@@ -240,7 +256,7 @@ int main(int argc, char* args[]){
     string filename;
     int max_iter;
     vector<string> goals;
-    vector<string> stacks;
+    vector<string> stacks;  //Initial problem input
     bool display_moves = false;
 
     if(!processArguments(filename, h_code, max_iter, display_moves, argc, args))

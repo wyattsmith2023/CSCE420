@@ -1,0 +1,99 @@
+probB12
+Input:
+5 10 15
+>>>>>>>>>>
+DIJ
+BC
+EG
+H
+AF
+>>>>>>>>>>
+
+D
+EFGJ
+IB
+ACH
+>>>>>>>>>>
+
+Transcript:
+iter=1, depth=pathcost=0, heuristic=9, score=9 children=20, Qsize=1
+iter=2, depth=pathcost=1, heuristic=8, score=9 children=20, Qsize=20
+iter=3, depth=pathcost=2, heuristic=8, score=10 children=20, Qsize=35
+iter=4, depth=pathcost=2, heuristic=8, score=10 children=16, Qsize=50
+iter=5, depth=pathcost=2, heuristic=8, score=10 children=20, Qsize=61
+iter=6, depth=pathcost=3, heuristic=7, score=10 children=20, Qsize=76
+iter=7, depth=pathcost=4, heuristic=6, score=10 children=20, Qsize=91
+iter=8, depth=pathcost=5, heuristic=5, score=10 children=20, Qsize=106
+iter=9, depth=pathcost=6, heuristic=4, score=10 children=16, Qsize=121
+iter=10, depth=pathcost=7, heuristic=3, score=10 children=16, Qsize=132
+iter=11, depth=pathcost=8, heuristic=2, score=10 children=20, Qsize=142
+iter=12, depth=pathcost=9, heuristic=1, score=10 children=16, Qsize=157
+success! iter=13, depth=pathcost=10, max_Qsize=168
+
+Moves for solution path:
+------- Move 0, h(n)=9 f(n)=9 -------
+DIJ
+BC
+EG
+H
+AF
+------- Move 1, h(n)=8 f(n)=9 -------
+DIJC
+B
+EG
+H
+AF
+------- Move 2, h(n)=8 f(n)=10 -------
+DIJCG
+B
+E
+H
+AF
+------- Move 3, h(n)=7 f(n)=10 -------
+DIJCG
+B
+EF
+H
+A
+------- Move 4, h(n)=6 f(n)=10 -------
+DIJC
+B
+EFG
+H
+A
+------- Move 5, h(n)=5 f(n)=10 -------
+DIJ
+B
+EFG
+H
+AC
+------- Move 6, h(n)=4 f(n)=10 -------
+DIJ
+B
+EFG
+
+ACH
+------- Move 7, h(n)=3 f(n)=10 -------
+DI
+B
+EFGJ
+
+ACH
+------- Move 8, h(n)=2 f(n)=10 -------
+D
+B
+EFGJ
+I
+ACH
+------- Move 9, h(n)=1 f(n)=10 -------
+D
+
+EFGJ
+IB
+ACH
+------- Move 10, h(n)=0 f(n)=10 -------
+
+D
+EFGJ
+IB
+ACH

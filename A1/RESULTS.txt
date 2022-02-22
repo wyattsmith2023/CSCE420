@@ -13,6 +13,8 @@ ADGI
 FH          FHE         +1      Goal is 1 space taller than the given
 
 Performance:
+Note: these performance metrics were gathered from my machine. The compute servers return results 
+that are slightly different, but comparable
 A03 - A11
 statistics: probs/probA03.bwp method Astar planlen 3 iter 4 maxq 10
 statistics: probs/probA04.bwp method Astar planlen 4 iter 5 maxq 9
@@ -43,60 +45,3 @@ statistics: probs/probB17.bwp method Astar planlen 16 iter 1318 maxq 14609
 statistics: probs/probB18.bwp method Astar planlen 13 iter 39 maxq 438
 statistics: probs/probB19.bwp method Astar planlen 14 iter 1355 maxq 8678
 statistics: probs/probB20.bwp method Astar planlen 16 iter 112 maxq 1471
-
-Moves: probB05
-Input
-5 10 7
->>>>>>>>>>
-AE
-CF
-D
-GHIJ
-B
->>>>>>>>>>
-AEG
-CFI
-DJB
-
-H
->>>>>>>>>>
-
-Output:
-------- Move 0, h(n)=5 f(n)=5 -------
-AE
-CF
-D
-GHIJ
-B
-------- Move 1, h(n)=4 f(n)=5 -------
-AE
-CF
-DJ
-GHI
-B
-------- Move 2, h(n)=3 f(n)=5 -------
-AE
-CF
-DJB
-GHI
-
-------- Move 3, h(n)=2 f(n)=5 -------
-AE
-CFI
-DJB
-GH
-
-------- Move 4, h(n)=1 f(n)=5 -------
-AE
-CFI
-DJB
-G
-H
-------- Move 5, h(n)=0 f(n)=5 -------
-AEG
-CFI
-DJB
-
-H
-
-

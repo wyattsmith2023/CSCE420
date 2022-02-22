@@ -14,7 +14,7 @@ To run the blocksworld program use ./a.out plus any arguments
 ./a.out <problem_to_solve> -H [H0|H1|H2] -MAX_ITERS <max_iterations> -MOVES
 ```
 
-# Arguments
+## Arguments
 | Argument | Description | Example | Required |
 | ---------- | ---------- | ---------- | ---------- |
 | <problem_to_solve> | The location of the file to be inputed into the program. Problems must be in the same design as specified in the problem statement | probA03.pwb | Yes |

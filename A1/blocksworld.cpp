@@ -1,6 +1,7 @@
-//Note: seems that entries are being repeated in reached and frontier
-// believed to be due to use of vectors as key
-// Proposed solution: substitue strings with deliminators instead of vectors
+// Heuristic used is if we find a block that needs to be moved
+// we add the number of blocks ontop of it including itself and 
+// if a goal stack is taller than the corresponding stack we add
+// the difference
 
 #include <iostream>
 #include <string.h>
@@ -23,6 +24,7 @@ public:
     vector<string> state;
     int path_cost;
     vector<Node> children;
+    vector<string> moves;
 
     Node(){}
 
@@ -36,27 +38,68 @@ public:
         path_cost = g + 1;
     }
 
-    void generateChildren(){
-        for(int i = 0; i < state.size(); i++){
-            if(state.at(i).size() == 0){
-                continue;
-            }
-            char top_of_stack = state.at(i).at(state.at(i).size() - 1);
-            state.at(i).pop_back();
-            for(int j = 0; j < state.size(); j++){
-                if(j != i){
-                    state.at(j) += top_of_stack;
-                    Node c(state, path_cost);
-                    children.push_back(c);
-                    state.at(j).pop_back();
+    int heuristic(){
+        int h = 0;
+        // best: B16
+        if(h_code == "H1"){
+            for(int i = 0; i < state.size(); i++){
+                if(state.at(i).size() < goal_state.at(i).size()){
+                    h += (goal_state.at(i).size() - state.at(i).size());
+                }
+                for(int j = 0; j < state.at(i).size(); j++){
+                    if(j < goal_state.at(i).size()){
+                        if(state.at(i).at(j) != goal_state.at(i).at(j)){
+                            h++;
+                        }
+                    }
                 }
             }
-            state.at(i) += (top_of_stack);
+        } else if (h_code == "H2"){
+            for(int i = 0; i < state.size(); i++){
+                if(state.at(i).size() < goal_state.at(i).size()){
+                    h += (goal_state.at(i).size() - state.at(i).size());
+                }
+                for(int j = 0; j < state.at(i).size(); j++){
+                    if(j < goal_state.at(i).size()){
+                        if(state.at(i).at(j) != goal_state.at(i).at(j)){
+                            h += (state.at(i).size() - state.at(i).find(state.at(i).at(j)));
+                        }
+                    }
+                }
+            }
+        }
+        return h;
+    }
+
+    void generateChildren(){
+        vector<string> child_state = state;
+        for(int i = 0; i < child_state.size(); i++){
+            if(child_state.at(i).size() == 0){
+                continue;
+            }
+            char top_of_stack = child_state.at(i).at(child_state.at(i).size() - 1);
+            child_state.at(i).pop_back();
+            for(int j = 0; j < child_state.size(); j++){
+                if(j != i){
+                    child_state.at(j) += top_of_stack;
+                    Node c(child_state, path_cost);
+                    for(int i = 0; i < moves.size(); i++){
+                        c.moves.push_back(moves.at(i));
+                    }
+                    c.moves.push_back("------- Move " + to_string(path_cost) + ", h(n)=" + to_string(heuristic()) + " f(n)=" + to_string(path_cost + heuristic()) +  " -------");
+                    for(int i = 0; i < state.size(); i++){
+                        c.moves.push_back(state.at(i));
+                    }
+                    children.push_back(c);
+                    child_state.at(j).pop_back();
+                }
+            }
+           child_state = state;
         }
     }
 };
 
-int processArguments(string &filename, string &h, int &max_iter, int argc,char* args[]){
+int processArguments(string &filename, string &h, int &max_iter, bool &display_moves, int argc,char* args[]){
 // Ensure file has been provided
     try{
         if(argc < 2){
@@ -86,6 +129,9 @@ int processArguments(string &filename, string &h, int &max_iter, int argc,char* 
                     else {
                         throw 2;
                     }
+                }
+                else if(strcmp(args[i],"-MOVES") == 0){
+                         display_moves = true;
                 }
                 else {
                     throw 3;
@@ -141,42 +187,9 @@ int processFile(string filename, vector<string> &stacks, vector<string> &goals){
     return num_moves; 
 }
 
-int heuristic(Node n){
-    int h = 0;
-    // best: B16
-    if(h_code == "H1"){
-        for(int i = 0; i < n.state.size(); i++){
-            if(n.state.at(i).size() < goal_state.at(i).size()){
-                h += (goal_state.at(i).size() - n.state.at(i).size());
-            }
-            for(int j = 0; j < n.state.at(i).size(); j++){
-                if(j < goal_state.at(i).size()){
-                    if(n.state.at(i).at(j) != goal_state.at(i).at(j)){
-                        h++;
-                    }
-                }
-            }
-        }
-    } else if (h_code == "H2"){
-        for(int i = 0; i < n.state.size(); i++){
-            if(n.state.at(i).size() < goal_state.at(i).size()){
-                h += (goal_state.at(i).size() - n.state.at(i).size());
-            }
-            for(int j = 0; j < n.state.at(i).size(); j++){
-                if(j < goal_state.at(i).size()){
-                    if(n.state.at(i).at(j) != goal_state.at(i).at(j)){
-                        h += (n.state.at(i).size() - n.state.at(i).find(n.state.at(i).at(j)));
-                    }
-                }
-            }
-        }
-    }
-    return h;
-}
-
 struct nodeCmp{
-    bool operator()(const Node n, const Node m) const {
-        return n.path_cost + heuristic(n) >= m.path_cost + heuristic(m);
+    bool operator()(Node n, Node m) const {
+        return n.path_cost + n.heuristic() >= m.path_cost + m.heuristic();
     }
 };
 Node bestFirstSearch(vector<string> problem, vector<string> goal, int max){
@@ -214,13 +227,25 @@ Node bestFirstSearch(vector<string> problem, vector<string> goal, int max){
     }
     return initial;
 }
+
+void printMoves(Node n){
+    for(int i = 0; i < n.moves.size(); i++){
+        cout << n.moves.at(i) << endl;
+    }
+        cout << "------- Move " << n.path_cost << ", h(n)=" << n.heuristic() << " f(n)=" << (n.path_cost + n.heuristic()) <<  " -------" << endl;
+        for(int i = 0; i < n.state.size(); i++){
+            cout << n.state.at(i) << endl;
+        }
+}
+
 int main(int argc, char* args[]){
     string filename;
     int max_iter;
     vector<string> goals;
     vector<string> stacks;
+    bool display_moves = false;
 
-    if(!processArguments(filename, h_code, max_iter, argc, args))
+    if(!processArguments(filename, h_code, max_iter, display_moves, argc, args))
         return 0;
 
     int num_moves = processFile(filename, stacks, goals);
@@ -240,15 +265,9 @@ int main(int argc, char* args[]){
         cout << "FAILED" << " iter " << iterations << " maxq " << max_q << endl;
     }
 
-    //DEBUG
-    /*while(curr->parent != NULL){
-        cout << "Move #" << curr->path_cost << endl;
-        for(int i = 0; i < curr->state.size(); i++){
-            cout << curr->state.at(i) << endl;
-        }
-        cout << "-------------------------" << endl;
 
-        curr = curr->parent;
-    }*/
+    if(display_moves)
+        printMoves(goal);
+    
 
 }

@@ -21,3 +21,10 @@ To run the blocksworld program use ./a.out plus any arguments
 | -H | The desired heuristic function | H0 | No -- default:H2 |
 | -MAX_ITERS | The maximum iterations desired for the algorithm before quitting | 1000 | No -- default:100000 |
 | -MOVES | Prints out the solution path | No arguments associated with | No -- deafault:No printing |
+
+## Notes
+- H0 is for BFS
+- Testing has shown program will work with multiple number of stacks
+- Best heuristic successfully finds goal routes for all provided test cases
+- Best heuristic will overestimate few configurations by a small number of moves
+- There will be variation based on operating system as shown by similar, but differing test results on local machine and TAMU Compute servers. This is documented in detail in RESULTS.txt
